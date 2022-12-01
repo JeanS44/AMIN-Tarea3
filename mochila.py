@@ -34,7 +34,6 @@ if len(sys.argv) == 3:
     print("Nombre del archivo: ", sys.argv[0], " Seed:", seed, " Tau:", tau)
     # Término de asignación de parámetros.
     random_solution = np.array([94,506,416,992,649,237,457,815,446,422,791,359,667,598,7,544,334,766,994,893,633,131,428,700,617,874,720,419,794,196,997,116,908,539,707,569,537,931,726,487,772,513,81,943,58,303,764,536,724,789])
-    random_solution = np.array()
     v_probabilidades = definirVectorProbabilidades(random_solution, tau)
     print(v_probabilidades)
     v_proporciones = definirVectorProporciones(v_probabilidades)
