@@ -25,6 +25,19 @@ def definirVectorRuleta(vector_proporcion):
         vector_ruleta = np.append(vector_ruleta, vector_proporcion[i]+vector_ruleta[i-1])
     return vector_ruleta
 
+def determinarFitness(vector_beneficio):
+    sum_v_beneficio = np.sum(vector_beneficio)
+    vector_fitness = np.array([])
+    for i in range(len(vector_beneficio)):
+        vector_fitness = np.append(vector_fitness, np.ceil(np.divide((vector_beneficio[i]*100),sum_v_beneficio)))
+    """ return "La suma total fue: ", suma_total, "el fitness es: ", fitness, " y la capacidad máxima de la mochila es: ", maximo_mochila """
+    """ return fitness """
+    return vector_fitness
+
+def determinarPosArrayOrdenado(vector_fitness, vector_fitness_sorted):
+    array = []
+    return array
+
 if len(sys.argv) == 3:
     # Asignación de parámetros.
     np.set_printoptions(threshold=sys.maxsize)
@@ -45,6 +58,13 @@ if len(sys.argv) == 3:
     print("Vector de proporciones:\n",v_proporciones)
     v_ruleta = definirVectorRuleta(v_proporciones)
     print("Vector de ruleta:\n",v_ruleta)
+    v_fitness = determinarFitness(beneficio)
+    print("Vector de fitness:\n", v_fitness)
+    v_fitness_sorted = np.array([], dtype=int)
+    v_fitness_sorted = np.sort(v_fitness, kind='mergesort')
+    print("Vector de fitness ordenado:\n", v_fitness_sorted)
+    pos_arr_ordenado = determinarPosArrayOrdenado(v_fitness, v_fitness_sorted)
+    print(pos_arr_ordenado)
 else:
     print("Porfavor reingrese los parámetros de manera correcta.")
     print("Parametros a ingresar: 'Nombre del archivo' 'Semilla' 'Tau'")
