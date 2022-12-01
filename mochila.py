@@ -33,13 +33,18 @@ if len(sys.argv) == 3:
     tau = float(sys.argv[2])
     print("Nombre del archivo: ", sys.argv[0], " Seed:", seed, " Tau:", tau)
     # Término de asignación de parámetros.
-    random_solution = np.array([94,506,416,992,649,237,457,815,446,422,791,359,667,598,7,544,334,766,994,893,633,131,428,700,617,874,720,419,794,196,997,116,908,539,707,569,537,931,726,487,772,513,81,943,58,303,764,536,724,789])
+    """ peso = np.array([94,506,416,992,649,237,457,815,446,422,791,359,667,598,7,544,334,766,994,893,633,131,428,700,617,874,720,419,794,196,997,116,908,539,707,569,537,931,726,487,772,513,81,943,58,303,764,536,724,789]) """
+    peso = np.array([95, 4 , 60, 32, 23, 72, 80, 62, 65, 46])
+    beneficio = np.array([55, 10, 47, 5, 4, 50, 8, 61, 85, 87])
+    cap_max = 269
+    random_solution = np.random.randint(2, size = len(peso))
+    print("Solución generada:\n", random_solution)
     v_probabilidades = definirVectorProbabilidades(random_solution, tau)
-    print(v_probabilidades)
+    print("Vector de probabilidades:\n",v_probabilidades)
     v_proporciones = definirVectorProporciones(v_probabilidades)
-    print(v_proporciones)
+    print("Vector de proporciones:\n",v_proporciones)
     v_ruleta = definirVectorRuleta(v_proporciones)
-    print(v_ruleta)
+    print("Vector de ruleta:\n",v_ruleta)
 else:
     print("Porfavor reingrese los parámetros de manera correcta.")
     print("Parametros a ingresar: 'Nombre del archivo' 'Semilla' 'Tau'")
