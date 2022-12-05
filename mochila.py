@@ -32,13 +32,13 @@ def determinarFitness(vector_beneficio, vector_peso, vector_solucion, cap_max):
     for i in range(len(vector_solucion)):
         if vector_solucion[i] == 1:
             suma_total += vector_peso[i]
-    if suma_total <= cap_max:
-        sum_v_beneficio = np.sum(vector_beneficio)
-        for i in range(len(vector_beneficio)):
+    for i in range(len(vector_solucion)):
+        if suma_total <= cap_max and vector_solucion[i] == 1:
+            sum_v_beneficio = np.sum(vector_beneficio)
             vector_fitness = np.append(vector_fitness, np.divide((vector_beneficio[i]*100),sum_v_beneficio))
-        """ return "La suma total fue: ", suma_total, "el fitness es: ", fitness, " y la capacidad máxima de la mochila es: ", maximo_mochila """
-        """ return fitness """
-        return vector_fitness
+        else:
+            vector_fitness = np.append(vector_fitness, 0)
+    return vector_fitness
 
 def seleccionarComponenteJ(vector_fitness_ordenado, vector_fitness):
     array = np.array([])
@@ -49,17 +49,18 @@ def seleccionarComponenteJ(vector_fitness_ordenado, vector_fitness):
                 array = np.append(array, pos)
     return array
 
-def determinarSelección(vector_solucion, vector_ruleta):
-    vector_seleccion = np.zeros(len(vector_solucion))
-    while len(vector_seleccion) != 10:
-        for i in range(0, len(vector_ruleta)):
+def determinarSelección(vector_solucion, vector_ruleta, iteraciones):
+    vector_seleccion = vector_solucion
+    for i in range(iteraciones):
+        for j in range(len(vector_seleccion)):
             azar = random.uniform(0, 1)
-            print("Azar", azar)
-            if azar <= vector_ruleta[i]:
-                pos = i
-                print("Pos", azar, pos, vector_ruleta[i])
-                vector_seleccion = np.append(vector_seleccion, vector_solucion[pos])
-        return vector_seleccion
+            if azar <= vector_ruleta[j]:
+                pos = j
+                if vector_seleccion[pos] == 1:
+                    vector_seleccion[pos] = 0
+                elif vector_seleccion[pos] == 0:
+                    vector_seleccion[pos] = 1
+    return vector_seleccion
 
 if len(sys.argv) == 4:
     # Asignación de parámetros.
@@ -77,22 +78,30 @@ if len(sys.argv) == 4:
     random_solution = np.random.randint(2, size = len(peso))
     print("Solución generada:\n", random_solution)
     v_probabilidades = definirVectorProbabilidades(random_solution, tau)
-    print("Vector de probabilidades:\n",v_probabilidades)
+    """ print("Vector de probabilidades:\n",v_probabilidades) """
     v_proporciones = definirVectorProporciones(v_probabilidades)
-    print("Vector de proporciones:\n",v_proporciones)
+    """ print("Vector de proporciones:\n",v_proporciones) """
     v_ruleta = definirVectorRuleta(v_proporciones)
-    print("Vector de ruleta:\n",v_ruleta)
-    v_fitness = determinarFitness(beneficio, peso, random_solution, cap_max)
-    print("Vector de fitness:\n", v_fitness)
+    """ print("Vector de ruleta:\n",v_ruleta) """
     
-    v_fitness_sorted = np.array([], dtype=int)
-    v_fitness_sorted = np.sort(v_fitness, kind='mergesort')
-    print("Vector de fitness ordenado:\n", v_fitness_sorted)
-    componente_j = seleccionarComponenteJ(v_fitness_sorted, v_fitness)
-    print("Vector de componente J:\n",componente_j)
-    seleccion = determinarSelección(random_solution,v_ruleta)
-    print(seleccion)
-        
+    i = 0
+    while i < iteraciones:
+        print("")
+        v_fitness = determinarFitness(beneficio, peso, random_solution, cap_max)
+        print("Vector de fitness:\n", v_fitness," y su suma es: ", np.sum(v_fitness))
+        v_fitness_sorted = np.array([], dtype=int)
+        v_fitness_sorted = np.sort(v_fitness, kind='mergesort')
+        """ print("Vector de fitness ordenado:\n", v_fitness_sorted) """
+        componente_j = seleccionarComponenteJ(v_fitness_sorted, v_fitness)
+        print("Vector de componente J:\n",componente_j)
+        seleccion = determinarSelección(random_solution,v_ruleta, 1000)
+        print("Solución generada en selección:\n", seleccion)
+        v_fitness_seleccion = determinarFitness(beneficio, peso, seleccion, cap_max)
+        print("Vector de fitness:\n", v_fitness_seleccion," y su suma es: ", np.sum(v_fitness_seleccion))
+        if np.sum(v_fitness_seleccion) > np.sum(v_fitness):
+            v_fitness = v_fitness_seleccion
+        print(v_fitness)
+        i += 1
 else:
     print("Porfavor reingrese los parámetros de manera correcta.")
     print("Parametros a ingresar: 'Nombre del archivo' 'Semilla' 'Tau'")
