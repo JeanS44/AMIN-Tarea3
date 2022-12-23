@@ -61,8 +61,16 @@ def determinarSelección(vector_solucion, vector_ruleta, iteraciones):
                     vector_seleccion[pos] = 1
     return vector_seleccion
 
-def rectificar(solucion_generada, solucion_seleccion):
-    
+def rectificar(random_sol, seleccion_sol, peso):
+    suma1 = 0
+    suma2 = 0
+    for i in range(len(random_sol)):
+        if random_sol[i]==1:
+            print(i)
+    for j in range(len(seleccion_sol)):
+        if seleccion_sol[j]==1:
+            print(j)
+    return suma1, suma2
 
 if len(sys.argv) == 5:
     # Asignación de parámetros.
@@ -74,11 +82,11 @@ if len(sys.argv) == 5:
     entrada = sys.argv[4]
     print("Nombre del archivo: ", sys.argv[0], " Seed:", seed, " Tau:", tau, " Archivo:", entrada)
     parametros = pd.read_csv(entrada, skiprows=1, delim_whitespace=True, header=None, nrows=3, usecols=[1]).to_numpy()
-    print(parametros)
+    """ print(parametros) """
     n = int(parametros[0])     
     c = int(parametros[1])     
     datos = pd.read_csv(entrada, skiprows=5, delimiter=',', header=None, nrows=n, usecols=[1, 2, 3]).transpose().to_numpy()
-    print(datos)
+    """ print(datos) """
     # Término de asignación de parámetros.
     random_solution = np.random.randint(2, size = len(datos[0]))
     print("Solución generada:\n", random_solution)
@@ -88,19 +96,20 @@ if len(sys.argv) == 5:
     """ print("Vector de proporciones:\n",v_proporciones) """
     v_ruleta = definirVectorRuleta(v_proporciones)
     """ print("Vector de ruleta:\n",v_ruleta) """
-    
+    seleccion1 = determinarSelección(random_solution,v_ruleta, 500)
+    print("Solución generada en selección:\n", seleccion1)
     i = 0
     while i < iteraciones:
-        print("")
+        print("------------------ Iteración", i, "------------------")
         v_fitness = determinarFitness(datos[0], datos[1], random_solution)
-        """ print("Vector de fitness:\n", v_fitness," y su suma es: ", np.sum(v_fitness)) """
+        print("Vector de fitness:\n", v_fitness)
         v_fitness_sorted = np.array([], dtype=int)
         v_fitness_sorted = np.sort(v_fitness, kind='mergesort')
-        """ print("Vector de fitness ordenado:\n", v_fitness_sorted) """
+        print("Vector de fitness ordenado:\n", v_fitness_sorted)
         componente_j = seleccionarComponenteJ(v_fitness_sorted, v_fitness)
         """ print("Vector de componente J:\n",componente_j) """
-        seleccion = determinarSelección(random_solution,v_ruleta, 1000)
-        print("Solución generada en selección:\n", seleccion)
+        rectificacion = rectificar(random_solution, seleccion1, datos[1])
+        print(rectificacion)
         i += 1
 else:
     print("Porfavor reingrese los parámetros de manera correcta.")
