@@ -49,7 +49,8 @@ def seleccionarComponenteJ(vector_fitness_ordenado, vector_fitness):
     return array
 
 def determinarSelección(vector_solucion, vector_ruleta, iteraciones):
-    vector_seleccion = vector_solucion
+    vector_seleccion = np.empty_like(vector_solucion)
+    vector_seleccion[:] = vector_solucion
     for i in range(iteraciones):
         for j in range(len(vector_seleccion)):
             azar = random.uniform(0, 1)
@@ -61,16 +62,12 @@ def determinarSelección(vector_solucion, vector_ruleta, iteraciones):
                     vector_seleccion[pos] = 1
     return vector_seleccion
 
-def rectificar(random_sol, seleccion_sol, peso):
-    suma1 = 0
-    suma2 = 0
-    for i in range(len(random_sol)):
-        if random_sol[i]==1:
-            print(i)
-    for j in range(len(seleccion_sol)):
-        if seleccion_sol[j]==1:
-            print(j)
-    return suma1, suma2
+def compararPesoYSolucion(sol, peso, cap_max):
+    suma = 0
+    for i in range(len(sol)):
+        if sol[i]==1:
+            suma+=peso[i]
+    return suma
 
 if len(sys.argv) == 5:
     # Asignación de parámetros.
@@ -96,9 +93,9 @@ if len(sys.argv) == 5:
     """ print("Vector de proporciones:\n",v_proporciones) """
     v_ruleta = definirVectorRuleta(v_proporciones)
     """ print("Vector de ruleta:\n",v_ruleta) """
-    seleccion1 = determinarSelección(random_solution,v_ruleta, 500)
-    print("Solución generada en selección:\n", seleccion1)
     i = 0
+    best_sol0 = np.array([])
+    s = 0
     while i < iteraciones:
         print("------------------ Iteración", i, "------------------")
         v_fitness = determinarFitness(datos[0], datos[1], random_solution)
@@ -108,8 +105,19 @@ if len(sys.argv) == 5:
         print("Vector de fitness ordenado:\n", v_fitness_sorted)
         componente_j = seleccionarComponenteJ(v_fitness_sorted, v_fitness)
         """ print("Vector de componente J:\n",componente_j) """
-        rectificacion = rectificar(random_solution, seleccion1, datos[1])
-        print(rectificacion)
+        seleccion = determinarSelección(random_solution,v_ruleta, 100)
+        print("Solución generada en selección:\n", seleccion)
+        ran = compararPesoYSolucion(random_solution, datos[1], c)
+        print(ran)
+        sele = compararPesoYSolucion(seleccion, datos[1], c)
+        print(sele)
+        if ran < sele:
+            best_sol0 = random_solution
+            s = ran
+        else:
+            best_sol0 = seleccion
+            s = sele
+        print(best_sol0)
         i += 1
 else:
     print("Porfavor reingrese los parámetros de manera correcta.")
